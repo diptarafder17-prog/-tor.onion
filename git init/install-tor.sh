@@ -1,4 +1,5 @@
-nano install-tor.sh
+git commit -m "Initial commit: Add install-tor.sh"
+install-tor.sh
 #!/usr/bin/env bash
 set -e
 
