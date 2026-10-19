@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d18">
+  <meta name="description" content="Tor Installation Project — documentation for legitimate Tor networking, Linux setup, and safer access to onion services.">
+  <title>Tor Installation Project — Secure Networking Docs</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080d18;
+      --panel: #0e1626;
+      --panel-2: #111d31;
+      --line: #23324a;
+      --text: #e8eef9;
+      --muted: #9aabc4;
+      --blue: #67a9ff;
+      --cyan: #63e3e7;
+      --green: #75e0b2;
+      --yellow: #ffd27a;
+      --red: #ff9099;
+      --radius: 18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.28);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0; background:
+        radial-gradient(900px 500px at 80% -10%, rgba(46,108,190,.20), transparent 60%),
+        radial-gradient(650px 450px at -15% 25%, rgba(54,207,210,.08), transparent 60%), var(--bg);
+      color: var(--text); font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { color: var(--cyan); text-decoration: underline; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20; backdrop-filter: blur(18px);
+      background: rgba(8,13,24,.88); border-bottom: 1px solid rgba(85,117,160,.22);
+    }
+    .top-inner { max-width: 1240px; margin: auto; padding: 14px 22px; display: flex; align-items: center; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--text); font-weight: 750; letter-spacing: -.02em; }
+    .brand:hover { text-decoration: none; }
+    .logo {
+      display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(145deg, #173b68, #0d1c31); border: 1px solid #315781; color: var(--cyan);
+      box-shadow: inset 0 0 18px rgba(103,169,255,.12);
+    }
+    .brand small { display: block; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .top-spacer { flex: 1; }
+    .top-link, .menu-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      color: var(--text); background: #101a2b; border: 1px solid var(--line); border-radius: 11px; padding: 9px 13px;
+    }
+    .menu-btn { display: none; }
+    .layout { max-width: 1240px; margin: auto; padding: 30px 22px 70px; display: grid; grid-template-columns: 245px minmax(0,1fr); gap: 30px; }
+    aside { align-self: start; position: sticky; top: 86px; max-height: calc(100vh - 105px); overflow: auto; padding: 18px 12px; border: 1px solid var(--line); border-radius: 16px; background: rgba(14,22,38,.72); }
+    .nav-label { margin: 8px 10px 7px; color: #7287a6; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; }
+    .nav-link { display: block; margin: 3px 0; padding: 9px 11px; border-radius: 9px; color: var(--muted); font-size: 14px; }
+    .nav-link:hover, .nav-link.active { background: #14243b; color: var(--text); text-decoration: none; }
+    .nav-link.active { box-shadow: inset 3px 0 var(--cyan); }
+    main { min-width: 0; }
+    .eyebrow { color: var(--cyan); font-size: 12px; text-transform: uppercase; letter-spacing: .17em; font-weight: 800; }
+    .hero { padding: 38px; border: 1px solid #29415f; border-radius: 24px; background: linear-gradient(135deg, rgba(18,36,61,.95), rgba(12,20,35,.94)); box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .hero:after { content: "◉"; position: absolute; right: 22px; top: -45px; font-size: 220px; line-height: 1; color: rgba(99,227,231,.035); pointer-events: none; }
+    h1 { margin: 10px 0 14px; font-size: clamp(34px, 5vw, 58px); line-height: 1.07; letter-spacing: -.045em; max-width: 760px; }
+    .gradient { background: linear-gradient(90deg, #fff, #8cc4ff 55%, #63e3e7); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { color: #b5c5db; max-width: 720px; font-size: 17px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 24px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 11px; padding: 11px 16px; border: 1px solid #31557c; color: #06101d; background: linear-gradient(135deg, #8ac0ff, #62e2e2); font-weight: 800; }
+    .btn:hover { color: #06101d; filter: brightness(1.06); text-decoration: none; }
+    .btn.secondary { color: var(--text); background: #111e31; border-color: var(--line); }
+    .notice { display: flex; gap: 12px; margin: 20px 0; padding: 15px 17px; border: 1px solid #315d62; border-radius: 13px; background: rgba(30,86,85,.14); color: #c9e9e9; }
+    .notice.warning { border-color: #68502a; background: rgba(110,76,25,.14); color: #f4dfb7; }
+    .notice strong { display: block; margin-bottom: 2px; }
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 18px 0 34px; }
+    .stat, .card, .doc-section { border: 1px solid var(--line); background: rgba(14,22,38,.78); border-radius: var(--radius); }
+    .stat { padding: 17px; }
+    .stat strong { display: block; font-size: 17px; }
+    .stat span { color: var(--muted); font-size: 13px; }
+    .section-head { margin: 40px 0 16px; }
+    h2 { font-size: clamp(24px,3vw,32px); line-height: 1.2; margin: 0 0 9px; letter-spacing: -.025em; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 8px 0 14px; }
+    .muted { color: var(--muted); }
+    .cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+    .card { padding: 22px; transition: transform .18s ease, border-color .18s ease; }
+    .card:hover { transform: translateY(-2px); border-color: #3e658f; }
+    .card-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 14px; border-radius: 12px; background: #172b46; color: var(--cyan); font-size: 20px; }
+    .doc-section { padding: 25px; margin-top: 16px; }
+    .doc-section h2 { margin-bottom: 13px; }
+    .steps { padding-left: 22px; }
+    .steps li { padding: 4px 0 7px 4px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { color: #9fe7e2; font-size: .93em; }
+    .codebox { margin: 14px 0 18px; border: 1px solid #2b3e58; border-radius: 13px; overflow: hidden; background: #070c14; }
+    .code-head { display: flex; align-items: center; gap: 10px; padding: 9px 13px; background: #101a29; border-bottom: 1px solid #26364c; color: var(--muted); font-size: 12px; }
+    .code-head span { flex: 1; }
+    .copy { color: var(--text); background: #1a2a40; border: 1px solid #304660; border-radius: 7px; padding: 5px 9px; font-size: 12px; }
+    pre { margin: 0; padding: 17px; white-space: pre-wrap; overflow-wrap: anywhere; color: #d9e8f8; font-size: 13px; line-height: 1.7; }
+    .tag { display: inline-block; padding: 3px 8px; border-radius: 999px; border: 1px solid #2d5961; color: var(--cyan); background: #10262e; font-size: 11px; font-weight: 750; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 490px; font-size: 14px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: #b9cce4; background: #111d30; }
+    td { color: #c8d4e5; }
+    .faq details { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .faq summary { cursor: pointer; font-weight: 750; }
+    .faq details p { color: var(--muted); margin-top: 10px; }
+    footer { max-width: 1240px; margin: 0 auto; padding: 0 22px 35px; color: #778aa5; font-size: 13px; }
+    .footer-inner { border-top: 1px solid var(--line); padding-top: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+    .search { width: 100%; margin: 12px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #0a1220; color: var(--text); }
+    .hidden { display: none !important; }
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 1fr; padding-top: 18px; }
+      aside { display: none; position: static; max-height: none; }
+      aside.open { display: block; }
+      .menu-btn { display: inline-flex; }
+      .hero { padding: 27px 23px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { padding: 13px 16px; }
+    }
+    @media (max-width: 560px) {
+      .top-inner { padding: 11px 14px; gap: 10px; }
+      .top-link { padding: 8px 10px; font-size: 13px; }
+      .brand { font-size: 14px; }
+      .brand small { font-size: 9px; }
+      .layout { padding: 14px 13px 45px; gap: 14px; }
+      .cards { grid-template-columns: 1fr; }
+      .doc-section { padding: 19px 16px; }
+      .lead { font-size: 15px; }
+      .hero:after { right: -22px; font-size: 150px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *:before, *:after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-inner">
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <a class="brand" href="#top" aria-label="Tor Installation Project home">
+        <span class="logo" aria-hidden="true">◉</span>
+        <span>Tor Installation Project<small>Networking documentation</small></span>
+      </a>
+      <span class="top-spacer"></span>
+      <a class="top-link" href="https://github.com/diptarafder17-prog/-tor.onion" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </div>
+  </header>
+
+  <div class="layout" id="top">
+    <aside id="sidebar" aria-label="Documentation navigation">
+      <div class="nav-label">Getting started</div>
+      <a class="nav-link active" href="#overview">Overview</a>
+      <a class="nav-link" href="#quick-start">Quick start</a>
+      <a class="nav-link" href="#install">Install Tor on Linux</a>
+      <div class="nav-label">Guides</div>
+      <a class="nav-link" href="#onion-services">Onion services</a>
+      <a class="nav-link" href="#verification">Verify addresses</a>
+      <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+      <div class="nav-label">Project</div>
+      <a class="nav-link" href="#security">Security notes</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+      <input class="search" id="navSearch" type="search" placeholder="Filter navigation…" aria-label="Filter navigation">
+    </aside>
+
+    <main>
+      <section class="hero" id="overview">
+        <div class="eyebrow">Open-source • Privacy • Linux</div>
+        <h1>Build safer connections.<br><span class="gradient">Understand Tor.</span></h1>
+        <p class="lead">Practical documentation for learning legitimate Tor networking, installing Tor on a Linux system, and safely accessing verified onion services.</p>
+        <div class="actions">
+          <a class="btn" href="#quick-start">Get started ↓</a>
+          <a class="btn secondary" href="https://github.com/diptarafder17-prog/-tor.onion" target="_blank" rel="noopener noreferrer">View source on GitHub ↗</a>
+        </div>
+      </section>
+
+      <div class="notice">
+        <div aria-hidden="true">ⓘ</div><div><strong>What this website is</strong>This is a static documentation website hosted by GitHub Pages. It does not run Tor, act as a VPN, or create an onion address. Tor must run separately on a compatible device or server.</div>
+      </div>
+
+      <div class="stats" aria-label="Project summary">
+        <div class="stat"><strong>Open source</strong><span>Review the code and documentation</span></div>
+        <div class="stat"><strong>Linux focused</strong><span>Debian and Ubuntu examples</span></div>
+        <div class="stat"><strong>Safety first</strong><span>Verify services and protect credentials</span></div>
+      </div>
+
+      <section id="quick-start">
+        <div class="section-head"><div class="eyebrow">Start here</div><h2>Choose your next step</h2><p class="muted">Use the guide that matches your goal. Commands below are examples for a Linux system you control.</p></div>
+        <div class="cards">
+          <article class="card"><div class="card-icon">⌘</div><h3>Install Tor on Linux</h3><p class="muted">Install the Tor package on Debian or Ubuntu and check its service status.</p><a href="#install">Read installation guide →</a></article>
+          <article class="card"><div class="card-icon">◎</div><h3>Access onion services</h3><p class="muted">Learn why onion services require Tor Browser and how to check addresses.</p><a href="#onion-services">Read access guide →</a></article>
+          <article class="card"><div class="card-icon">✓</div><h3>Verify a website</h3><p class="muted">Use official sources to reduce the risk of fake or malicious links.</p><a href="#verification">Verification checklist →</a></article>
+          <article class="card"><div class="card-icon">⚑</div><h3>Review security</h3><p class="muted">Understand common mistakes, secret handling, and safe project practices.</p><a href="#security">Security guidance →</a></article>
+        </div>
+      </section>
+
+      <section class="doc-section" id="install">
+        <div class="eyebrow">Linux guide</div><h2>Install Tor on Debian / Ubuntu</h2>
+        <p>This basic example uses the distribution's package manager. Package versions and service names may vary. For current recommendations, consult the <a href="https://support.torproject.org/" target="_blank" rel="noopener noreferrer">official Tor support documentation</a>.</p>
+        <ol class="steps">
+          <li>Open a terminal on your own Debian or Ubuntu machine or server.</li>
+          <li>Update package information and install Tor:</li>
+        </ol>
+        <div class="codebox"><div class="code-head"><span>bash · install</span><button class="copy" data-copy="sudo apt update&#10;sudo apt install tor">Copy commands</button></div><pre><code>sudo apt update
+sudo apt install tor</code></pre></div>
+        <p>On systems using systemd, check whether the service is available and running:</p>
+        <div class="codebox"><div class="code-head"><span>bash · status</span><button class="copy" data-copy="systemctl status tor">Copy command</button></div><pre><code>systemctl status tor</code></pre></div>
+        <div class="notice warning"><div aria-hidden="true">⚠</div><div><strong>Use a suitable environment</strong>These commands are for a Linux system where you have permission to administer packages. GitHub Pages and a normal browser tab cannot run these commands. Avoid running scripts from repositories you have not reviewed.</div></div>
+      </section>
+
+      <section class="doc-section" id="onion-services">
+        <div class="eyebrow">Access guide</div><h2>Access legitimate onion services</h2>
+        <p>Onion services use addresses ending in <code>.onion</code> and are accessed through the Tor network. For ordinary browsing and onion services on Android, use the official Tor Browser rather than an unknown third-party “dark web browser”.</p>
+        <ol class="steps">
+          <li>Download Tor Browser from the <a href="https://www.torproject.org/download/" target="_blank" rel="noopener noreferrer">official Tor Project download page</a>.</li>
+          <li>Open it and connect to the Tor network.</li>
+          <li>Get an onion address from the organisation's genuine HTTPS website or its verified documentation.</li>
+          <li>Enter the exact address in Tor Browser. Do not trust a link merely because it appears in a directory or repository.</li>
+        </ol>
+        <p>Tor is not simply a VPN. It can improve privacy, but it does not make every website, file, or user action anonymous or safe.</p>
+      </section>
+
+      <section class="doc-section" id="verification">
+        <div class="eyebrow">Trust checks</div><h2>Verify an onion address</h2>
+        <ul class="steps">
+          <li><strong>Confirm the source:</strong> look for the address on the organisation's official website or authenticated announcements.</li>
+          <li><strong>Check every character:</strong> modern version 3 onion addresses use a long address of 56 characters before <code>.onion</code>.</li>
+          <li><strong>Watch for impersonation:</strong> lookalike names, urgent payment demands, and unexpected downloads are warning signs.</li>
+          <li><strong>Never share secrets:</strong> do not enter account passwords, recovery phrases, or payment details into an unverified site.</li>
+          <li><strong>Keep software updated:</strong> use the official browser source and install security updates.</li>
+        </ul>
+        <p>For technical details, read the Tor Project's <a href="https://community.torproject.org/onion-services/" target="_blank" rel="noopener noreferrer">onion services documentation</a>.</p>
+      </section>
+
+      <section class="doc-section" id="troubleshooting">
+        <div class="eyebrow">Diagnostics</div><h2>Troubleshooting</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Problem</th><th>What to check</th></tr></thead>
+          <tbody>
+            <tr><td>Tor Browser will not connect</td><td>Check internet access, device time, app updates, and official Tor connection help.</td></tr>
+            <tr><td>An onion address fails</td><td>Check spelling and confirm the service is online using the organisation's official source.</td></tr>
+            <tr><td>GitHub Pages shows 404</td><td>Confirm Pages is enabled and the published source contains an <code>index.html</code> at its root.</td></tr>
+            <tr><td>Linux service is missing</td><td>Confirm Tor is installed and consult your distribution's service/package documentation.</td></tr>
+            <tr><td>Codespaces terminal is stuck</td><td>Reconnect to the Codespace and check its status; Pages itself does not provide a Linux runtime.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="doc-section" id="security">
+        <div class="eyebrow">Protect your project</div><h2>Security notes</h2>
+        <div class="notice warning"><div aria-hidden="true">!</div><div><strong>Never publish credentials</strong>Do not commit passwords, API keys, access tokens, private keys, VPN profiles containing secrets, or server <code>.env</code> files. If a secret was exposed, revoke or rotate it immediately; deleting the file may not remove it from Git history.</div></div>
+        <ul class="steps">
+          <li>Review shell scripts before running them; understand each command.</li>
+          <li>Use least-privilege permissions and keep the operating system updated.</li>
+          <li>Do not run untrusted GitHub Actions code on a self-hosted runner, especially for a public repository.</li>
+          <li>Use HTTPS for the published documentation and verify external links before entering sensitive information.</li>
+          <li>Remember: GitHub Pages hosts static files. It cannot run a persistent Tor daemon or host an onion service by itself.</li>
+        </ul>
+      </section>
+
+      <section class="doc-section faq" id="faq">
+        <div class="eyebrow">Common questions</div><h2>FAQ</h2>
+        <details><summary>Is Tor free?</summary><p>Tor Browser and the Tor network are free to use. Running your own server may involve hosting or data costs.</p></details>
+        <details><summary>Is Tor the same as a VPN?</summary><p>No. They use different approaches to routing and privacy. Neither guarantees complete anonymity or protection from malicious downloads.</p></details>
+        <details><summary>Does this GitHub Pages website open onion sites?</summary><p>No. It is a static documentation page. Use Tor Browser to access onion services.</p></details>
+        <details><summary>Can I create an onion service on GitHub Pages?</summary><p>Not directly. A real onion service needs a host where Tor can run and be configured. GitHub Pages does not run background daemons.</p></details>
+        <details><summary>Where can I learn more?</summary><p>Start with the <a href="https://www.torproject.org/" target="_blank" rel="noopener noreferrer">Tor Project</a>, its <a href="https://support.torproject.org/" target="_blank" rel="noopener noreferrer">support documentation</a>, and the <a href="https://docs.github.com/en/pages" target="_blank" rel="noopener noreferrer">GitHub Pages documentation</a>.</p></details>
+      </section>
+
+      <section class="doc-section">
+        <div class="eyebrow">Project links</div><h2>Explore the source</h2>
+        <p class="muted">Review the source code, report an issue, or contribute improvements through the repository.</p>
+        <div class="actions">
+          <a class="btn" href="https://github.com/diptarafder17-prog/-tor.onion" target="_blank" rel="noopener noreferrer">Repository ↗</a>
+          <a class="btn secondary" href="https://github.com/diptarafder17-prog/-tor.onion/issues" target="_blank" rel="noopener noreferrer">Report an issue ↗</a>
+          <a class="btn secondary" href="https://www.torproject.org/" target="_blank" rel="noopener noreferrer">Official Tor Project ↗</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer><div class="footer-inner"><span>© <span id="year"></span> Tor Installation Project · Community documentation</span><span>Built as a static GitHub Pages website · No trackers or external libraries</span></div></footer>
+
+  <script>
+    (() => {
+      const menuBtn = document.getElementById('menuBtn');
+      const sidebar = document.getElementById('sidebar');
+      menuBtn.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', String(open));
+      });
+      sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded', 'false');
+      }));
+      document.querySelectorAll('[data-copy]').forEach(button => {
+        button.addEventListener('click', async () => {
+          const text = button.getAttribute('data-copy');
+          try {
+            await navigator.clipboard.writeText(text);
+            const old = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => button.textContent = old, 1400);
+          } catch {
+            const area = document.createElement('textarea');
+            area.value = text; area.setAttribute('readonly', '');
+            area.style.position = 'fixed'; area.style.opacity = '0';
+            document.body.appendChild(area); area.select();
+            try { document.execCommand('copy'); button.textContent = 'Copied'; }
+            catch { button.textContent = 'Select command manually'; }
+            area.remove();
+            setTimeout(() => button.textContent = 'Copy command', 1600);
+          }
+        });
+      });
+      const search = document.getElementById('navSearch');
+      search.addEventListener('input', () => {
+        const q = search.value.toLowerCase().trim();
+        sidebar.querySelectorAll('.nav-link').forEach(link => {
+          link.classList.toggle('hidden', !link.textContent.toLowerCase().includes(q));
+        });
+        sidebar.querySelectorAll('.nav-label').forEach(label => {
+          const next = [];
+          let node = label.nextElementSibling;
+          while (node && !node.classList.contains('nav-label')) { if (node.classList.contains('nav-link')) next.push(node); node = node.nextElementSibling; }
+          label.classList.toggle('hidden', q.length > 0 && !next.some(n => !n.classList.contains('hidden')));
+        });
+      });
+      const links = [...document.querySelectorAll('.nav-link')];
+      const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id));
+            }
+          });
+        }, { rootMargin: '-18% 0px -70% 0px' });
+        sections.forEach(section => observer.observe(section));
+      }
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
